@@ -28,7 +28,44 @@ const products = [
 ];
 
 // Carrito de compras
-let cart = JSON.parse(localStorage.getItem("cart")) || [];
+let cart = [];
+
+// Mostrar productos en la página principal
+function loadProducts() {
+    const productList = document.getElementById("product-list");
+    productList.innerHTML = '';
+    
+    products.forEach(product => {
+        const productCard = `
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <img src="${product.image}" class="card-img-top" alt="${product.name}">
+                    <div class="card-body">
+                        <h5 class="card-title">${product.name}</h5>
+                        <p class="card-text">$${product.price}</p>
+                        <button class="btn btn-primary add-to-cart" data-id="${product.id}">Agregar al carrito</button>
+                    </div>
+                </div>
+            </div>
+        `;
+        productList.innerHTML += productCard;
+    });
+}
+
+// Agregar producto al carrito
+function addToCart(productId) {
+    const product = products.find(p => p.id === productId);
+    const existingProduct = cart.find(p => p.id === productId);
+    
+    if (existingProduct) {
+        existingProduct.quantity++;
+    } else {
+        cart.push({...product, quantity: 1});
+    }
+    
+    updateCartCount();
+    alert('Producto agregado al carrito');
+}
 
 // Actualizar el contador de productos en el carrito
 function updateCartCount() {
@@ -36,74 +73,7 @@ function updateCartCount() {
     document.getElementById("cart-count").textContent = cartCount;
 }
 
-// Mostrar productos en el carrito
-function loadCart() {
-    const cartItems = document.getElementById("cart-items");
-    cartItems.innerHTML = '';
-    
-    cart.forEach(item => {
-        const cartItem = `
-            <div class="row mb-3">
-                <div class="col-md-8">
-                    <p>${item.name} x ${item.quantity}</p>
-                </div>
-                <div class="col-md-4 text-end">
-                    <p>$${item.price * item.quantity}</p>
-                </div>
-            </div>
-        `;
-        cartItems.innerHTML += cartItem;
-    });
-}
-
-// Mostrar resumen del pedido en la página de confirmación
-function loadOrderSummary() {
-    const orderSummary = document.getElementById("order-summary");
-    orderSummary.innerHTML = '';
-    
-    let total = 0;
-    cart.forEach(item => {
-        total += item.price * item.quantity;
-        const orderItem = `
-            <div class="row mb-3">
-                <div class="col-md-8">
-                    <p>${item.name} x ${item.quantity}</p>
-                </div>
-                <div class="col-md-4 text-end">
-                    <p>$${item.price * item.quantity}</p>
-                </div>
-            </div>
-        `;
-        orderSummary.innerHTML += orderItem;
-    });
-    
-    // Mostrar total del pedido
-    const totalSummary = `
-        <div class="row">
-            <div class="col-md-8"><strong>Total</strong></div>
-            <div class="col-md-4 text-end"><strong>$${total}</strong></div>
-        </div>
-    `;
-    orderSummary.innerHTML += totalSummary;
-}
-
-// Confirmar el pedido
-function confirmOrder() {
-    if (cart.length === 0) {
-        alert("Tu carrito está vacío.");
-    } else {
-        alert("Pedido confirmado. ¡Gracias por tu compra!");
-        cart = [];  // Limpiar el carrito
-        localStorage.setItem("cart", JSON.stringify(cart));  // Guardar el carrito vacío
-        window.location.href = "index.html";  // Redirigir a la página de inicio
-    }
-}
-
-// Cargar carrito y resumen de pedido
-if (document.getElementById("cart-items")) {
-    loadCart();
-}
-
-if (document.getElementById("order-summary")) {
-    loadOrderSummary();
-}
+// Llamar a las funciones de carga al cargar la página
+document.addEventListener("DOMContentLoaded", () => {
+    loadProducts();  // Llamada para cargar los productos
+});
