@@ -35,8 +35,7 @@ function loadProducts() {
     const productList = document.getElementById("product-list");
     productList.innerHTML = '';
     
-    console.log(products); // Verifica que los productos estén siendo procesados
-
+    // Recorrer y agregar los productos a la interfaz
     products.forEach(product => {
         const productCard = `
             <div class="col-md-4 mb-4">
@@ -51,6 +50,14 @@ function loadProducts() {
             </div>
         `;
         productList.innerHTML += productCard;
+    });
+
+    // Agregar event listeners a los botones de "Agregar al carrito" después de que los productos han sido cargados
+    document.querySelectorAll('.add-to-cart').forEach(button => {
+        button.addEventListener('click', (event) => {
+            const productId = parseInt(event.target.getAttribute('data-id'));
+            addToCart(productId);
+        });
     });
 }
 
@@ -76,16 +83,6 @@ function updateCartCount() {
 }
 
 // Llamar a las funciones de carga al cargar la página
-// Llamada a la función cuando el DOM esté completamente cargado
 document.addEventListener("DOMContentLoaded", () => {
     loadProducts();  // Llamada para cargar los productos
-
-    // Agregar event listeners a los botones de "Agregar al carrito"
-    document.querySelectorAll('.add-to-cart').forEach(button => {
-        button.addEventListener('click', (event) => {
-            const productId = parseInt(event.target.getAttribute('data-id'));
-            addToCart(productId);
-        });
-    });
 });
-
